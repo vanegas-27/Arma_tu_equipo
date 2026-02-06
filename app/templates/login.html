@@ -1,0 +1,18 @@
+<!-- app/templates/login.html -->
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h2>Iniciar sesión</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.correo.label(class="form-label") }}
+        {{ form.correo(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.contraseña.label(class="form-label") }}
+        {{ form.contraseña(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}
