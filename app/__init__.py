@@ -16,10 +16,10 @@ def create_app():
     login_manager.init_app(app)
 
     # Importar y registrar blueprints
-    # from app.routes import routes
-    # from app.auth import auth
-    # app.register_blueprint(routes)
-    # app.register_blueprint(auth)
+    from app.routes import routes
+    from app.auth import auth
+    app.register_blueprint(routes)
+    app.register_blueprint(auth)
 
     return app
 
