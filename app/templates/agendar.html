@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Agendar Partido{% endblock %}
+{% block content %}
+<h2>Agendar Partido</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.fecha.label }} {{ form.fecha(class="form-control") }}</div>
+    <div class="mb-3">{{ form.hora.label }} {{ form.hora(class="form-control") }}</div>
+    <div class="mb-3">{{ form.ubicacion.label }} {{ form.ubicacion(class="form-control") }}</div>
+    <div class="mb-3">{{ form.id_arquero.label }} {{ form.id_arquero(class="form-select") }}</div>
+    <div class="mb-3">{{ form.pago.label }} {{ form.pago(class="form-control") }}</div>
+    {{ form.submit(class="btn btn-success") }}
+</form>
+{% endblock %}
