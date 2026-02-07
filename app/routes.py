@@ -47,3 +47,14 @@ def agendar():
         return redirect(url_for("routes.panel"))
 
     return render_template("agendar.html", form=form)
+
+
+@routes.route("/mis_partidos")
+@login_required
+def mis_partidos():
+    if current_user.rol != "normal":
+        flash("Solo los usuarios normales pueden ver sus partidos agendados.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = current_user.partidos  # gracias a la relación en models.py
+    return render_template("mis_partidos.html", partidos=partidos)
