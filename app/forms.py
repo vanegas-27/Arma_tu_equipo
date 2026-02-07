@@ -35,3 +35,11 @@ class RegisterForm(FlaskForm):
         usuario = Usuario.query.filter_by(correo=correo.data).first()
         if usuario:
             raise ValidationError("El correo ya está registrado")
+        
+class PartidoForm(FlaskForm):
+    fecha = DateField("Fecha", validators=[DataRequired()])
+    hora = StringField("Hora", validators=[DataRequired()])
+    ubicacion = StringField("Ubicación", validators=[DataRequired()])
+    id_arquero = SelectField("Arquero", coerce=int, validators=[DataRequired()])
+    pago = FloatField("Pago", validators=[DataRequired()])
+    submit = SubmitField("Agendar partido")
