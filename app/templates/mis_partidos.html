@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Mis Partidos{% endblock %}
+{% block content %}
+<h2>Mis Partidos Agendados</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Ubicación</th>
+            <th>Arquero</th>
+            <th>Pago</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for partido in partidos %}
+        <tr>
+            <td>{{ partido.fecha }}</td>
+            <td>{{ partido.hora }}</td>
+            <td>{{ partido.ubicacion }}</td>
+            <td>{{ partido.arquero.usuario.nombre }}</td>
+            <td>{{ partido.pago }}</td>
+            <td>{{ partido.estado }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
