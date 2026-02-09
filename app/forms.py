@@ -43,3 +43,14 @@ class PartidoForm(FlaskForm):
     id_arquero = SelectField("Arquero", coerce=int, validators=[DataRequired()])
     pago = FloatField("Pago", validators=[DataRequired()])
     submit = SubmitField("Agendar partido")
+
+
+class EditProfileForm(FlaskForm):
+    nombre = StringField("Nombre", validators=[DataRequired(), Length(min=2, max=50)])
+    apellido = StringField("Apellido", validators=[DataRequired(), Length(min=2, max=50)])
+    telefono = StringField("Teléfono")
+    direccion = StringField("Dirección")
+    # Campos específicos para arquero
+    años_tapando = IntegerField("Años tapando")
+    precio_por_hora = FloatField("Precio por hora")
+    submit = SubmitField("Actualizar perfil")
