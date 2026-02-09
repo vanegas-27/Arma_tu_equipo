@@ -56,7 +56,15 @@ def mis_partidos():
         flash("Solo los usuarios normales pueden ver sus partidos agendados.", "danger")
         return redirect(url_for("routes.panel"))
 
-    partidos = current_user.partidos  # gracias a la relación en models.py
+    partidos = current_user.partidos
+
+    # Notificación simple
+    for p in partidos:
+        if p.estado == "confirmado":
+            flash(f"Tu partido con {p.arquero.usuario.nombre} fue confirmado.", "success")
+        elif p.estado == "cancelado":
+            flash(f"Tu partido con {p.arquero.usuario.nombre} fue cancelado.", "danger")
+
     return render_template("mis_partidos.html", partidos=partidos)
 
 @routes.route("/partidos_asignados")
@@ -96,3 +104,28 @@ def editar_perfil():
         return redirect(url_for("routes.panel"))
 
     return render_template("editar_perfil.html", form=form)
+
+
+@routes.route("/actualizar_estado/<int:partido_id>/<string:nuevo_estado>", methods=["POST"])
+@login_required
+def actualizar_estado(partido_id, nuevo_estado):
+    if current_user.rol != "arquero":
+        flash("Solo los arqueros pueden actualizar estados de partidos.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partido = Partido.query.get_or_404(partido_id)
+
+    # Verificar que el partido pertenece al arquero actual
+    if partido.id_arquero != current_user.arquero.id:
+        flash("No tienes permiso para modificar este partido.", "danger")
+        return redirect(url_for("routes.partidos_asignados"))
+
+    # Actualizar estado
+    if nuevo_estado in ["pendiente", "confirmado", "cancelado"]:
+        partido.estado = nuevo_estado
+        db.session.commit()
+        flash(f"Estado del partido actualizado a {nuevo_estado}.", "success")
+    else:
+        flash("Estado inválido.", "danger")
+
+    return redirect(url_for("routes.partidos_asignados"))
