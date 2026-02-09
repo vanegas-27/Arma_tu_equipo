@@ -1,7 +1,7 @@
 # app/routes.py
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.forms import PartidoForm
+from app.forms import PartidoForm, EditProfileForm
 from app.models import Arquero, Partido
 from app import db
 
@@ -58,3 +58,41 @@ def mis_partidos():
 
     partidos = current_user.partidos  # gracias a la relación en models.py
     return render_template("mis_partidos.html", partidos=partidos)
+
+@routes.route("/partidos_asignados")
+@login_required
+def partidos_asignados():
+    if current_user.rol != "arquero":
+        flash("Solo los arqueros pueden ver sus partidos asignados.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = current_user.arquero.partidos  # relación en models.py
+    return render_template("partidos_asignados.html", partidos=partidos)
+
+@routes.route("/editar_perfil", methods=["GET", "POST"])
+@login_required
+def editar_perfil():
+    form = EditProfileForm(obj=current_user)  # precargar datos del usuario
+
+    # Si es arquero, precargar también sus datos
+    if current_user.rol == "arquero" and current_user.arquero:
+        form.años_tapando.data = current_user.arquero.años_tapando
+        form.precio_por_hora.data = current_user.arquero.precio_por_hora
+
+    if form.validate_on_submit():
+        # Actualizar datos básicos
+        current_user.nombre = form.nombre.data
+        current_user.apellido = form.apellido.data
+        current_user.telefono = form.telefono.data
+        current_user.direccion = form.direccion.data
+
+        # Si es arquero, actualizar datos específicos
+        if current_user.rol == "arquero" and current_user.arquero:
+            current_user.arquero.años_tapando = form.años_tapando.data
+            current_user.arquero.precio_por_hora = form.precio_por_hora.data
+
+        db.session.commit()
+        flash("Perfil actualizado correctamente.", "success")
+        return redirect(url_for("routes.panel"))
+
+    return render_template("editar_perfil.html", form=form)
