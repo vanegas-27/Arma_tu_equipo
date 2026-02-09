@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Editar Perfil{% endblock %}
+{% block content %}
+<h2>Editar Perfil</h2>
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.nombre.label }} {{ form.nombre(class="form-control") }}</div>
+    <div class="mb-3">{{ form.apellido.label }} {{ form.apellido(class="form-control") }}</div>
+    <div class="mb-3">{{ form.telefono.label }} {{ form.telefono(class="form-control") }}</div>
+    <div class="mb-3">{{ form.direccion.label }} {{ form.direccion(class="form-control") }}</div>
+
+    {% if current_user.rol == "arquero" %}
+        <div class="mb-3">{{ form.años_tapando.label }} {{ form.años_tapando(class="form-control") }}</div>
+        <div class="mb-3">{{ form.precio_por_hora.label }} {{ form.precio_por_hora(class="form-control") }}</div>
+    {% endif %}
+
+    {{ form.submit(class="btn btn-primary") }}
+</form>
+{% endblock %}
