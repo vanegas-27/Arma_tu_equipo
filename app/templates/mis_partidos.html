@@ -21,7 +21,17 @@
             <td>{{ partido.ubicacion }}</td>
             <td>{{ partido.arquero.usuario.nombre }}</td>
             <td>{{ partido.pago }}</td>
-            <td>{{ partido.estado }}</td>
+            <td>
+                {% if partido.estado == "pendiente" %}
+                    <span class="badge bg-warning">Pendiente</span>
+                {% elif partido.estado == "confirmado" %}
+                    <span class="badge bg-success">Confirmado</span>
+                {% elif partido.estado == "cancelado" %}
+                    <span class="badge bg-danger">Cancelado</span>
+                {% else %}
+                    {{ partido.estado }}
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

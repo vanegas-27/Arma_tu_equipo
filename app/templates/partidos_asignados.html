@@ -11,6 +11,7 @@
             <th>Usuario</th>
             <th>Pago</th>
             <th>Estado</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -22,6 +23,14 @@
             <td>{{ partido.usuario.nombre }}</td>
             <td>{{ partido.pago }}</td>
             <td>{{ partido.estado }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='confirmado') }}">
+                    <button class="btn btn-success btn-sm">Confirmar</button>
+                </form>
+                <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='cancelado') }}">
+                    <button class="btn btn-danger btn-sm">Cancelar</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
