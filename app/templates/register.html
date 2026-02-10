@@ -1,54 +1,93 @@
-<!-- app/templates/register.html -->
 {% extends "base.html" %}
 {% block title %}Registro{% endblock %}
 {% block content %}
-<h2>Registro de usuario</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-        {{ form.nombre.label(class="form-label") }}
-        {{ form.nombre(class="form-control") }}
+<section class="login-page">
+  <div class="register-card animate-fade-in-up">
+
+    <!-- Logo / Header -->
+    <div class="login-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+        <circle cx="8.5" cy="7" r="4"></circle>
+        <line x1="20" y1="8" x2="20" y2="14"></line>
+        <line x1="23" y1="11" x2="17" y2="11"></line>
+      </svg>
     </div>
-    <div class="mb-3">
-        {{ form.apellido.label(class="form-label") }}
-        {{ form.apellido(class="form-control") }}
-    </div>
-    <div class="mb-3">
+    <h2>Crear una cuenta</h2>
+    <p class="login-subtitle">Completa tus datos para registrarte en la plataforma</p>
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <!-- Fila doble: Nombre y Apellido -->
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.nombre.label(class="form-label") }}
+          {{ form.nombre(class="form-control", placeholder="Tu nombre") }}
+        </div>
+        <div class="form-group">
+          {{ form.apellido.label(class="form-label") }}
+          {{ form.apellido(class="form-control", placeholder="Tu apellido") }}
+        </div>
+      </div>
+
+      <div class="form-group">
         {{ form.correo.label(class="form-label") }}
-        {{ form.correo(class="form-control") }}
-    </div>
-    <div class="mb-3">
+        {{ form.correo(class="form-control", placeholder="correo@ejemplo.com") }}
+      </div>
+
+      <div class="form-group">
         {{ form.telefono.label(class="form-label") }}
-        {{ form.telefono(class="form-control") }}
-    </div>
-    <div class="mb-3">
-        {{ form.contraseña.label(class="form-label") }}
-        {{ form.contraseña(class="form-control") }}
-    </div>
-    <div class="mb-3">
-        {{ form.contraseña_confirmacion.label(class="form-label") }}
-        {{ form.contraseña_confirmacion(class="form-control") }}
-    </div>
-    <div class="mb-3">
-        {{ form.fecha_nacimiento.label(class="form-label") }}
-        {{ form.fecha_nacimiento(class="form-control") }}
-    </div>
-    <div class="mb-3">
-        {{ form.direccion.label(class="form-label") }}
-        {{ form.direccion(class="form-control") }}
-    </div>
-    <div class="mb-3">
+        {{ form.telefono(class="form-control", placeholder="300 123 4567") }}
+      </div>
+
+      <!-- Fila doble: Password -->
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.contraseña.label(class="form-label") }}
+          {{ form.contraseña(class="form-control", placeholder="Min. 6 caracteres") }}
+        </div>
+        <div class="form-group">
+          {{ form.contraseña_confirmacion.label(class="form-label") }}
+          {{ form.contraseña_confirmacion(class="form-control", placeholder="Repite la contraseña") }}
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.fecha_nacimiento.label(class="form-label") }}
+          {{ form.fecha_nacimiento(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.direccion.label(class="form-label") }}
+          {{ form.direccion(class="form-control", placeholder="Tu direccion") }}
+        </div>
+      </div>
+
+      <div class="form-group">
         {{ form.rol.label(class="form-label") }}
         {{ form.rol(class="form-select") }}
-    </div>
-    <div class="mb-3">
-        {{ form.años_tapando.label(class="form-label") }}
-        {{ form.años_tapando(class="form-control") }}
-    </div>
-    <div class="mb-3">
-        {{ form.precio_por_hora.label(class="form-label") }}
-        {{ form.precio_por_hora(class="form-control") }}
-    </div>
-    {{ form.submit(class="btn btn-success") }}
-</form>
+      </div>
+
+      <!-- Campos condicionales de arquero -->
+      <div class="form-row">
+        <div class="form-group">
+          {{ form.años_tapando.label(class="form-label") }}
+          {{ form.años_tapando(class="form-control", placeholder="Ej: 5") }}
+        </div>
+        <div class="form-group">
+          {{ form.precio_por_hora.label(class="form-label") }}
+          {{ form.precio_por_hora(class="form-control", placeholder="Ej: 25000") }}
+        </div>
+      </div>
+
+      {{ form.submit(class="btn btn-primary btn-lg", style="width:100%; justify-content:center; margin-top: 8px;") }}
+    </form>
+
+    <p class="login-divider">
+      Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesion</a>
+    </p>
+
+  </div>
+</section>
 {% endblock %}

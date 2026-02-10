@@ -1,38 +1,96 @@
 {% extends "base.html" %}
 {% block title %}Partidos Asignados{% endblock %}
 {% block content %}
-<h2>Partidos Asignados</h2>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Ubicación</th>
-            <th>Usuario</th>
-            <th>Pago</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for partido in partidos %}
-        <tr>
-            <td>{{ partido.fecha }}</td>
-            <td>{{ partido.hora }}</td>
-            <td>{{ partido.ubicacion }}</td>
-            <td>{{ partido.usuario.nombre }}</td>
-            <td>{{ partido.pago }}</td>
-            <td>{{ partido.estado }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='confirmado') }}">
-                    <button class="btn btn-success btn-sm">Confirmar</button>
-                </form>
-                <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='cancelado') }}">
-                    <button class="btn btn-danger btn-sm">Cancelar</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<section class="panel-page">
+  <div class="container">
+
+    <div class="panel-header animate-fade-in-up">
+      <h2>Partidos asignados</h2>
+      <p>Gestiona las solicitudes de partidos que te han enviado. Confirma o cancela segun tu disponibilidad.</p>
+    </div>
+
+    {% if partidos %}
+    <div class="card animate-fade-in-up delay-2">
+      <div class="table-wrapper" style="border: none;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Ubicacion</th>
+              <th>Solicitado por</th>
+              <th>Pago</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for partido in partidos %}
+            <tr>
+              <td>
+                <span style="font-weight: 600;">{{ partido.fecha }}</span>
+              </td>
+              <td>{{ partido.hora }}</td>
+              <td>{{ partido.ubicacion }}</td>
+              <td>
+                <span style="font-weight: 500;">{{ partido.usuario.nombre }}</span>
+              </td>
+              <td>
+                <span style="font-weight: 600; color: var(--color-primary);">${{ partido.pago }}</span>
+              </td>
+              <td>
+                {% if partido.estado == 'pendiente' %}
+                  <span class="badge badge-warning">Pendiente</span>
+                {% elif partido.estado == 'confirmado' %}
+                  <span class="badge badge-success">Confirmado</span>
+                {% elif partido.estado == 'cancelado' %}
+                  <span class="badge badge-danger">Cancelado</span>
+                {% else %}
+                  <span class="badge">{{ partido.estado }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='confirmado') }}">
+                    <button type="submit" class="btn btn-success btn-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      Confirmar
+                    </button>
+                  </form>
+                  <form method="POST" action="{{ url_for('routes.actualizar_estado', partido_id=partido.id, nuevo_estado='cancelado') }}">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                      Cancelar
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="card animate-fade-in-up delay-2">
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <h3>Sin partidos asignados</h3>
+        <p>Aun no tienes solicitudes de partidos. Cuando un usuario te agende, aparecera aqui.</p>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
 {% endblock %}

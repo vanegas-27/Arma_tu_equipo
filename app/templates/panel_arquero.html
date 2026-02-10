@@ -1,12 +1,98 @@
 {% extends "base.html" %}
 {% block title %}Panel Arquero{% endblock %}
 {% block content %}
-<h2>Bienvenido arquero {{ usuario.nombre }}</h2>
-<p>Este es tu panel como <strong>arquero</strong>.</p>
+<section class="panel-page">
+  <div class="container">
 
-<ul>
-    <li>Ver partidos asignados</li>
-    <li>Actualizar tu precio por hora</li>
-    <li>Editar tu perfil</li>
-</ul>
+    <!-- Header de bienvenida -->
+    <div class="panel-welcome animate-fade-in-up">
+      <div class="panel-welcome-text">
+        <span class="section-tag">Panel de arquero</span>
+        <h2>Bienvenido, {{ usuario.nombre }}</h2>
+        <p>Administra tus partidos asignados, consulta estadisticas y gestiona tu perfil profesional.</p>
+      </div>
+    </div>
+
+    <!-- Acciones rapidas -->
+    <div class="panel-actions-grid animate-fade-in-up delay-2">
+
+      <a href="/partidos_asignados" class="panel-action-card">
+        <div class="panel-action-icon green">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <div class="panel-action-info">
+          <h3>Partidos asignados</h3>
+          <p>Revisa y gestiona los partidos que te han solicitado</p>
+        </div>
+        <div class="panel-action-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <a href="/editar_perfil" class="panel-action-card">
+        <div class="panel-action-icon amber">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="panel-action-info">
+          <h3>Editar perfil</h3>
+          <p>Actualiza tus datos, precio y experiencia</p>
+        </div>
+        <div class="panel-action-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <a href="/historial_arquero" class="panel-action-card">
+        <div class="panel-action-icon purple">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="panel-action-info">
+          <h3>Historial</h3>
+          <p>Consulta tus partidos completados anteriores</p>
+        </div>
+        <div class="panel-action-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <a href="/estadisticas_arquero" class="panel-action-card">
+        <div class="panel-action-icon teal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <div class="panel-action-info">
+          <h3>Estadisticas</h3>
+          <p>Visualiza graficos de tu rendimiento como arquero</p>
+        </div>
+        <div class="panel-action-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+</section>
 {% endblock %}

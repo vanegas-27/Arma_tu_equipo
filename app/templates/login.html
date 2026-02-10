@@ -1,18 +1,37 @@
-<!-- app/templates/login.html -->
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Iniciar sesion - Arma tu equipo{% endblock %}
+
 {% block content %}
-<h2>Iniciar sesión</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">
-        {{ form.correo.label(class="form-label") }}
-        {{ form.correo(class="form-control") }}
+<div class="login-page">
+    <div class="login-card animate-fade-in-up">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+                <path d="M2 12h20"/>
+            </svg>
+        </div>
+        <h2>Bienvenido de vuelta</h2>
+        <p class="login-subtitle">Ingresa tus credenciales para acceder a tu cuenta</p>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.correo.label(class="form-label") }}
+                {{ form.correo(class="form-control", placeholder="tu@correo.com") }}
+            </div>
+            <div class="form-group">
+                {{ form.contraseña.label(class="form-label") }}
+                {{ form.contraseña(class="form-control", placeholder="Tu contraseña") }}
+            </div>
+            {{ form.submit(class="btn btn-primary btn-lg") }}
+        </form>
+
+        <p class="login-divider">
+            No tienes cuenta? <a href="{{ url_for('auth.register') }}">Registrate aqui</a>
+        </p>
     </div>
-    <div class="mb-3">
-        {{ form.contraseña.label(class="form-label") }}
-        {{ form.contraseña(class="form-control") }}
-    </div>
-    {{ form.submit(class="btn btn-primary") }}
-</form>
+</div>
 {% endblock %}
+
+{% block footer %}{% endblock %}

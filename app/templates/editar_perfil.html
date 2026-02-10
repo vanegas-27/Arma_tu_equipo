@@ -1,19 +1,60 @@
 {% extends "base.html" %}
-{% block title %}Editar Perfil{% endblock %}
+{% block title %}Editar Perfil - Arma tu equipo{% endblock %}
+
 {% block content %}
-<h2>Editar Perfil</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">{{ form.nombre.label }} {{ form.nombre(class="form-control") }}</div>
-    <div class="mb-3">{{ form.apellido.label }} {{ form.apellido(class="form-control") }}</div>
-    <div class="mb-3">{{ form.telefono.label }} {{ form.telefono(class="form-control") }}</div>
-    <div class="mb-3">{{ form.direccion.label }} {{ form.direccion(class="form-control") }}</div>
+<div class="panel-page">
+    <div class="container">
+        <div class="panel-header animate-fade-in-up">
+            <h2>Editar perfil</h2>
+            <p>Actualiza tu informacion personal</p>
+        </div>
 
-    {% if current_user.rol == "arquero" %}
-        <div class="mb-3">{{ form.años_tapando.label }} {{ form.años_tapando(class="form-control") }}</div>
-        <div class="mb-3">{{ form.precio_por_hora.label }} {{ form.precio_por_hora(class="form-control") }}</div>
-    {% endif %}
+        <div class="card form-card animate-fade-in-up delay-1">
+            <div class="card-header-custom">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Datos personales
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.nombre.label(class="form-label") }}
+                        {{ form.nombre(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.apellido.label(class="form-label") }}
+                        {{ form.apellido(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.telefono.label(class="form-label") }}
+                        {{ form.telefono(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.direccion.label(class="form-label") }}
+                        {{ form.direccion(class="form-control") }}
+                    </div>
 
-    {{ form.submit(class="btn btn-primary") }}
-</form>
+                    {% if current_user.rol == "arquero" %}
+                        <div style="border-top: 1px solid var(--color-border); padding-top: 20px; margin-top: 20px;">
+                            <h4 style="font-size: 0.95rem; margin-bottom: 16px; color: var(--color-text);">Informacion de arquero</h4>
+                            <div class="form-group">
+                                {{ form.años_tapando.label(class="form-label") }}
+                                {{ form.años_tapando(class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.precio_por_hora.label(class="form-label") }}
+                                {{ form.precio_por_hora(class="form-control") }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {{ form.submit(class="btn btn-primary") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Estadisticas - Arma tu equipo{% endblock %}
+
+{% block content %}
+<div class="panel-page">
+    <div class="container">
+        <div class="panel-header animate-fade-in-up">
+            <h2>Estadisticas</h2>
+            <p>Resumen de tu actividad en la plataforma</p>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row animate-fade-in-up delay-1">
+            <div class="stat-card">
+                <div class="stat-icon amber">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Total gastado</h4>
+                    <div class="stat-value">${{ total }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-card animate-fade-in-up delay-2">
+            <h3>Partidos confirmados por mes</h3>
+            <canvas id="graficoPartidos"></canvas>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    const ctx = document.getElementById('graficoPartidos').getContext('2d');
+    const graficoPartidos = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ labels|tojson }},
+            datasets: [{
+                label: 'Partidos confirmados',
+                data: {{ data|tojson }},
+                backgroundColor: 'rgba(15, 118, 110, 0.7)',
+                borderColor: 'rgba(15, 118, 110, 1)',
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

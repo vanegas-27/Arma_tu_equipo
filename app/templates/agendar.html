@@ -1,14 +1,47 @@
 {% extends "base.html" %}
-{% block title %}Agendar Partido{% endblock %}
+{% block title %}Agendar Partido - Arma tu equipo{% endblock %}
+
 {% block content %}
-<h2>Agendar Partido</h2>
-<form method="POST">
-    {{ form.hidden_tag() }}
-    <div class="mb-3">{{ form.fecha.label }} {{ form.fecha(class="form-control") }}</div>
-    <div class="mb-3">{{ form.hora.label }} {{ form.hora(class="form-control") }}</div>
-    <div class="mb-3">{{ form.ubicacion.label }} {{ form.ubicacion(class="form-control") }}</div>
-    <div class="mb-3">{{ form.id_arquero.label }} {{ form.id_arquero(class="form-select") }}</div>
-    <div class="mb-3">{{ form.pago.label }} {{ form.pago(class="form-control") }}</div>
-    {{ form.submit(class="btn btn-success") }}
-</form>
+<div class="panel-page">
+    <div class="container">
+        <div class="panel-header animate-fade-in-up">
+            <h2>Agendar partido</h2>
+            <p>Completa los datos para reservar tu arquero</p>
+        </div>
+
+        <div class="card form-card animate-fade-in-up delay-1">
+            <div class="card-header-custom">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                Detalles del partido
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.fecha.label(class="form-label") }}
+                        {{ form.fecha(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.hora.label(class="form-label") }}
+                        {{ form.hora(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.ubicacion.label(class="form-label") }}
+                        {{ form.ubicacion(class="form-control", placeholder="Ej: Cancha Los Pinos, Calle 50") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.id_arquero.label(class="form-label") }}
+                        {{ form.id_arquero(class="form-select") }}
+                    </div>
+                    {{ form.submit(class="btn btn-success btn-lg") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

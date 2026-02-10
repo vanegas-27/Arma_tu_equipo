@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Historial Arquero - Arma tu equipo{% endblock %}
+
+{% block content %}
+<div class="panel-page">
+    <div class="container">
+        <div class="panel-header animate-fade-in-up">
+            <h2>Historial de partidos asignados</h2>
+            <p>Registro completo de los partidos en los que participaste</p>
+        </div>
+
+        <!-- Total stat -->
+        <div class="stats-row animate-fade-in-up delay-1">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Total ganado</h4>
+                    <div class="stat-value">${{ total }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Partidos atajados</h4>
+                    <div class="stat-value">{{ partidos|length }}</div>
+                </div>
+            </div>
+        </div>
+
+        {% if partidos %}
+        <div class="animate-fade-in-up delay-2">
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Ubicacion</th>
+                            <th>Usuario</th>
+                            <th>Pago</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for partido in partidos %}
+                        <tr>
+                            <td>{{ partido.fecha }}</td>
+                            <td>{{ partido.hora }}</td>
+                            <td>{{ partido.ubicacion }}</td>
+                            <td>{{ partido.usuario.nombre }}</td>
+                            <td><strong>${{ partido.pago }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card animate-fade-in-up delay-2">
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <h3>Sin historial</h3>
+                <p>Aun no tienes partidos asignados en tu historial.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
