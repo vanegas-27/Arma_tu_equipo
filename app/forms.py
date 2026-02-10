@@ -41,7 +41,6 @@ class PartidoForm(FlaskForm):
     hora = StringField("Hora", validators=[DataRequired()])
     ubicacion = StringField("Ubicación", validators=[DataRequired()])
     id_arquero = SelectField("Arquero", coerce=int, validators=[DataRequired()])
-    pago = FloatField("Pago", validators=[DataRequired()])
     submit = SubmitField("Agendar partido")
 
 
