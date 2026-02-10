@@ -4,6 +4,8 @@ from flask_login import login_required, current_user
 from app.forms import PartidoForm, EditProfileForm
 from app.models import Arquero, Partido
 from app import db
+from collections import Counter
+import calendar
 
 routes = Blueprint("routes", __name__)
 
@@ -28,17 +30,18 @@ def agendar():
         return redirect(url_for("routes.panel"))
 
     form = PartidoForm()
-    # Llenar lista de arqueros
     form.id_arquero.choices = [(a.id, a.usuario.nombre) for a in Arquero.query.all()]
 
     if form.validate_on_submit():
+        arquero = Arquero.query.get(form.id_arquero.data)
+
         nuevo_partido = Partido(
             id_usuario=current_user.id,
-            id_arquero=form.id_arquero.data,
+            id_arquero=arquero.id,
             fecha=form.fecha.data,
             hora=form.hora.data,
             ubicacion=form.ubicacion.data,
-            pago=form.pago.data,
+            pago=arquero.precio_por_hora,   # se asigna automáticamente
             estado="pendiente"
         )
         db.session.add(nuevo_partido)
@@ -57,13 +60,6 @@ def mis_partidos():
         return redirect(url_for("routes.panel"))
 
     partidos = current_user.partidos
-
-    # Notificación simple
-    for p in partidos:
-        if p.estado == "confirmado":
-            flash(f"Tu partido con {p.arquero.usuario.nombre} fue confirmado.", "success")
-        elif p.estado == "cancelado":
-            flash(f"Tu partido con {p.arquero.usuario.nombre} fue cancelado.", "danger")
 
     return render_template("mis_partidos.html", partidos=partidos)
 
@@ -129,3 +125,68 @@ def actualizar_estado(partido_id, nuevo_estado):
         flash("Estado inválido.", "danger")
 
     return redirect(url_for("routes.partidos_asignados"))
+
+@routes.route("/historial_usuario")
+@login_required
+def historial_usuario():
+    if current_user.rol != "normal":
+        flash("Solo los usuarios normales pueden ver su historial.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = [p for p in current_user.partidos if p.estado == "confirmado"]
+    total_gastado = sum(p.pago for p in partidos)
+
+    return render_template("historial_usuario.html", partidos=partidos, total=total_gastado)
+
+@routes.route("/historial_arquero")
+@login_required
+def historial_arquero():
+    if current_user.rol != "arquero":
+        flash("Solo los arqueros pueden ver su historial.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = [p for p in current_user.arquero.partidos if p.estado == "confirmado"]
+    total_ganado = sum(p.pago for p in partidos)
+
+    return render_template("historial_arquero.html", partidos=partidos, total=total_ganado)
+
+
+@routes.route("/estadisticas_usuario")
+@login_required
+def estadisticas_usuario():
+    if current_user.rol != "normal":
+        flash("Solo los usuarios normales pueden ver estadísticas.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = [p for p in current_user.partidos if p.estado == "confirmado"]
+
+    # Contar partidos por mes
+    meses = [p.fecha.month for p in partidos]
+    conteo = Counter(meses)
+
+    labels = [calendar.month_name[m] for m in sorted(conteo.keys())]
+    data = [conteo[m] for m in sorted(conteo.keys())]
+
+    total_gastado = sum(p.pago for p in partidos)
+
+    return render_template("estadisticas_usuario.html", labels=labels, data=data, total=total_gastado)
+
+@routes.route("/estadisticas_arquero")
+@login_required
+def estadisticas_arquero():
+    if current_user.rol != "arquero":
+        flash("Solo los arqueros pueden ver estadísticas.", "danger")
+        return redirect(url_for("routes.panel"))
+
+    partidos = [p for p in current_user.arquero.partidos if p.estado == "confirmado"]
+
+    # Contar partidos por mes
+    meses = [p.fecha.month for p in partidos]
+    conteo = Counter(meses)
+
+    labels = [calendar.month_name[m] for m in sorted(conteo.keys())]
+    data = [conteo[m] for m in sorted(conteo.keys())]
+
+    total_ganado = sum(p.pago for p in partidos)
+
+    return render_template("estadisticas_arquero.html", labels=labels, data=data, total=total_ganado)
