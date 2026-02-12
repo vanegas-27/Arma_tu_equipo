@@ -14,7 +14,7 @@
         <h2>Bienvenido de vuelta</h2>
         <p class="login-subtitle">Ingresa tus credenciales para acceder a tu cuenta</p>
 
-        <form method="POST">
+        <form method="POST", autocomplete="off">
             {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.correo.label(class="form-label") }}
