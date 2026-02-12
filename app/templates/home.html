@@ -1,6 +1,170 @@
 {% extends "base.html" %}
 {% block title %}Inicio - Arma tu equipo{% endblock %}
 
+{% block head %}
+<style>
+.arqueros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+.arquero-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.arquero-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.arquero-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #0f756e 0%, #14a085 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+.arquero-avatar svg {
+    width: 40px;
+    height: 40px;
+    color: white;
+}
+.arquero-card h3 {
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+    color: #1a1a2e;
+}
+.arquero-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 16px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+.arquero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.stat-label {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+.btn-block {
+    width: 100%;
+}
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.modal-overlay.active {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 450px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+.modal-close:hover {
+    background: #f5f5f5;
+}
+.modal-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.modal-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #0f756e 0%, #14a085 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+.modal-avatar svg {
+    width: 40px;
+    height: 40px;
+    color: white;
+}
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1a1a2e;
+}
+.modal-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 24px;
+}
+.modal-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.modal-actions .btn {
+    width: 100%;
+    text-align: center;
+}
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <!-- HERO SECTION -->
@@ -136,6 +300,88 @@
     </div>
 </section>
 
+<!-- ARQUEROS SECTION -->
+{% if arqueros %}
+<section class="section">
+    <div class="container">
+        <div class="section-header animate-fade-in-up">
+            <span class="section-tag">Nuestros Arqueros</span>
+            <h2>Conoce a los mejores arqueros</h2>
+            <p>Arqueros verificados y listos para tu proximo partido</p>
+        </div>
+        <div class="arqueros-grid">
+            {% for a in arqueros %}
+            <div class="arquero-card animate-fade-in-up delay-{{ loop.index }}">
+                <div class="arquero-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                <h3>{{ a.usuario.nombre }} {{ a.usuario.apellido }}</h3>
+                <div class="arquero-stats">
+                    <div class="arquero-stat">
+                        <span class="stat-label">Años tapando</span>
+                        <span class="stat-value">{{ a.años_tapando }}</span>
+                    </div>
+                    <div class="arquero-stat">
+                        <span class="stat-label">Calificacion</span>
+                        <span class="stat-value">{% if a.calificacion > 0 %}{{ "%.1f"|format(a.calificacion) }}{% else %}Nuevo{% endif %}</span>
+                    </div>
+                    <div class="arquero-stat">
+                        <span class="stat-label">Por hora</span>
+                        <span class="stat-value">${{ "{:,.0f}".format(a.precio_por_hora) }}</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="openModal({{ a.id }}, '{{ a.usuario.nombre }}', '{{ a.usuario.apellido }}', {{ a.años_tapando }}, {{ a.precio_por_hora }}, {{ a.calificacion }})">Ver mas</button>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="{{ url_for('routes.agendar') }}" class="btn btn-accent btn-lg">Ver todos los arqueros</a>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="arqueroModal" onclick="closeModal(event)">
+    <div class="modal-content animate-fade-in-up" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+            <div class="modal-avatar">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+            </div>
+            <h2 id="modalNombre"></h2>
+        </div>
+        <div class="modal-body">
+            <div class="modal-stats">
+                <div class="modal-stat">
+                    <span class="stat-label">Años tapando</span>
+                    <span class="stat-value" id="modalAños"></span>
+                </div>
+                <div class="modal-stat">
+                    <span class="stat-label">Valor por hora</span>
+                    <span class="stat-value" id="modalPrecio"></span>
+                </div>
+                <div class="modal-stat">
+                    <span class="stat-label">Calificacion</span>
+                    <span class="stat-value" id="modalCalif"></span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <a href="#" id="modalLinkDetalle" class="btn btn-outline-primary">Ver perfil completo</a>
+                {% if current_user.is_authenticated and current_user.rol == 'normal' %}
+                    <a href="{{ url_for('routes.agendar') }}" class="btn btn-primary">Agendar partido</a>
+                {% elif not current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Iniciar sesion para agendar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- ABOUT US -->
 <section class="section section-alt">
     <div class="container">
@@ -197,4 +443,31 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openModal(id, nombre, apellido, años, precio, calificacion) {
+    document.getElementById('modalNombre').textContent = nombre + ' ' + apellido;
+    document.getElementById('modalAños').textContent = años + ' años';
+    document.getElementById('modalPrecio').textContent = '$' + precio.toLocaleString('es-CO');
+    document.getElementById('modalCalif').textContent = calificacion > 0 ? calificacion.toFixed(1) : 'Nuevo';
+    document.getElementById('modalLinkDetalle').href = '/arquero/' + id;
+    document.getElementById('arqueroModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal(event) {
+    if (!event || event.target.classList.contains('modal-overlay')) {
+        document.getElementById('arqueroModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+    }
+});
+</script>
 {% endblock %}

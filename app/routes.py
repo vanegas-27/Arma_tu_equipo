@@ -11,7 +11,13 @@ routes = Blueprint("routes", __name__)
 
 @routes.route("/")
 def home():
-    return render_template("home.html")
+    arqueros = Arquero.query.limit(4).all()
+    return render_template("home.html", arqueros=arqueros)
+
+@routes.route("/arquero/<int:arquero_id>")
+def arquero_detail(arquero_id):
+    arquero = Arquero.query.get_or_404(arquero_id)
+    return render_template("arquero_detail.html", arquero=arquero)
 
 @routes.route("/panel")
 @login_required
