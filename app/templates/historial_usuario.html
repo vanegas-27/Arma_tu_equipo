@@ -58,7 +58,16 @@
                             <td>{{ partido.fecha }}</td>
                             <td>{{ partido.hora }}</td>
                             <td>{{ partido.ubicacion }}</td>
-                            <td>{{ partido.arquero.usuario.nombre }}</td>
+                            <td>
+                                <a href="{{ url_for('routes.arquero_detail', arquero_id=partido.arquero.id) }}" style="color: #0f756e; font-weight: 500;">
+                                    {{ partido.arquero.usuario.nombre }} {{ partido.arquero.usuario.apellido }}
+                                </a>
+                                {% if partido.arquero.calificacion > 0 %}
+                                <span style="color: #f59e0b; font-size: 12px; margin-left: 4px;">
+                                    ★ {{ "%.1f"|format(partido.arquero.calificacion) }}
+                                </span>
+                                {% endif %}
+                            </td>
                             <td><strong>${{ partido.pago }}</strong></td>
                         </tr>
                         {% endfor %}

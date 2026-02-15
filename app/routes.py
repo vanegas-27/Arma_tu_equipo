@@ -1,5 +1,5 @@
 # app/routes.py
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
 from app.forms import PartidoForm, EditProfileForm
 from app.models import Arquero, Partido
@@ -36,7 +36,15 @@ def agendar():
         return redirect(url_for("routes.panel"))
 
     form = PartidoForm()
-    form.id_arquero.choices = [(a.id, a.usuario.nombre) for a in Arquero.query.all()]
+    choices = []
+    for a in Arquero.query.all():
+        nombre = a.usuario.nombre
+        if a.calificacion > 0:
+            nombre += f" (★ {a.calificacion:.1f})"
+        else:
+            nombre += " (Sin Calificacion)"
+        choices.append((a.id, nombre))
+    form.id_arquero.choices = choices
 
     if form.validate_on_submit():
         arquero = Arquero.query.get(form.id_arquero.data)
@@ -196,3 +204,50 @@ def estadisticas_arquero():
     total_ganado = sum(p.pago for p in partidos)
 
     return render_template("estadisticas_arquero.html", labels=labels, data=data, total=total_ganado)
+
+@routes.route("/calificar/<int:partido_id>", methods=["POST"])
+@login_required
+def calificar_arquero(partido_id):
+    if current_user.rol != "normal":
+        flash("Solo los usuarios pueden calificar arqueros.", "danger")
+        return redirect(url_for("routes.mis_partidos"))
+
+    partido = Partido.query.get_or_404(partido_id)
+
+    if partido.id_usuario != current_user.id:
+        flash("No tienes permiso para calificar este partido.", "danger")
+        return redirect(url_for("routes.mis_partidos"))
+
+    if partido.estado != "confirmado":
+        flash("Solo puedes calificar partidos confirmados.", "danger")
+        return redirect(url_for("routes.mis_partidos"))
+
+    if partido.calificado:
+        flash("Ya has calificado este partido.", "warning")
+        return redirect(url_for("routes.mis_partidos"))
+
+    calificacion = request.form.get("calificacion")
+    if not calificacion or not calificacion.isdigit():
+        flash("Por favor selecciona una calificacion.", "danger")
+        return redirect(url_for("routes.mis_partidos"))
+
+    calificacion = int(calificacion)
+    if calificacion < 1 or calificacion > 5:
+        flash("La calificacion debe estar entre 1 y 5.", "danger")
+        return redirect(url_for("routes.mis_partidos"))
+
+    arquero = partido.arquero
+
+    if arquero.calificacion == 0:
+        arquero.calificacion = float(calificacion)
+    else:
+        num_partidos = Partido.query.filter_by(id_arquero=arquero.id, estado="confirmado").count()
+        if num_partidos > 0:
+            nueva_calif = ((arquero.calificacion * num_partidos) + calificacion) / (num_partidos + 1)
+            arquero.calificacion = round(nueva_calif, 1)
+
+    partido.calificado = True
+    db.session.commit()
+
+    flash("Gracias por calificar al arquero!", "success")
+    return redirect(url_for("routes.mis_partidos"))
