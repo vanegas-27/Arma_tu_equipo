@@ -49,6 +49,7 @@ class Partido(db.Model):
     ubicacion = db.Column(db.String(200), nullable=False)
     pago = db.Column(db.Float, nullable=False)
     estado = db.Column(db.String(20), default="pendiente")  # pendiente, confirmado, cancelado
+    calificado = db.Column(db.Boolean, default=False)  # si el usuario ya califico al arquero
 
     # Relaciones
     usuario = db.relationship("Usuario", back_populates="partidos")
