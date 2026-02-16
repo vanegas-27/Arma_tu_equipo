@@ -30,6 +30,12 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
+    overflow: hidden;
+}
+.arquero-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .arquero-avatar svg {
     width: 40px;
@@ -124,6 +130,10 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
+    overflow: hidden;
+}
+.modal-avatar img {
+    display: none;
 }
 .modal-avatar svg {
     width: 40px;
@@ -313,9 +323,13 @@
             {% for a in arqueros %}
             <div class="arquero-card animate-fade-in-up delay-{{ loop.index }}">
                 <div class="arquero-avatar">
+                    {% if a.usuario.foto %}
+                    <img src="{{ url_for('static', filename='uploads/' + a.usuario.foto) }}" alt="{{ a.usuario.nombre }}">
+                    {% else %}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
+                    {% endif %}
                 </div>
                 <h3>{{ a.usuario.nombre }} {{ a.usuario.apellido }}</h3>
                 <div class="arquero-stats">
@@ -332,12 +346,12 @@
                         <span class="stat-value">${{ "{:,.0f}".format(a.precio_por_hora) }}</span>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-block" onclick="openModal({{ a.id }}, '{{ a.usuario.nombre }}', '{{ a.usuario.apellido }}', {{ a.años_tapando }}, {{ a.precio_por_hora }}, {{ a.calificacion }})">Ver mas</button>
+                <button class="btn btn-primary btn-block" onclick="openModal({{ a.id }}, '{{ a.usuario.nombre }}', '{{ a.usuario.apellido }}', {{ a.años_tapando }}, {{ a.precio_por_hora }}, {{ a.calificacion }}, '{{ a.usuario.foto if a.usuario.foto else '' }}')">Ver mas</button>
             </div>
             {% endfor %}
         </div>
         <div style="text-align: center; margin-top: 40px;">
-            <a href="{{ url_for('routes.agendar') }}" class="btn btn-accent btn-lg">Ver todos los arqueros</a>
+            <a href="{{ url_for('routes.arqueros') }}" class="btn btn-accent btn-lg">Ver todos los arqueros</a>
         </div>
     </div>
 </section>
@@ -348,6 +362,7 @@
         <button class="modal-close" onclick="closeModal()">&times;</button>
         <div class="modal-header">
             <div class="modal-avatar">
+                <img src="" alt="" id="modalImagen" style="display: none; width: 100%; height: 100%; object-fit: cover;">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
@@ -447,12 +462,21 @@
 
 {% block scripts %}
 <script>
-function openModal(id, nombre, apellido, años, precio, calificacion) {
+function openModal(id, nombre, apellido, años, precio, calificacion, foto) {
     document.getElementById('modalNombre').textContent = nombre + ' ' + apellido;
     document.getElementById('modalAños').textContent = años + ' años';
     document.getElementById('modalPrecio').textContent = '$' + precio.toLocaleString('es-CO');
     document.getElementById('modalCalif').textContent = calificacion > 0 ? calificacion.toFixed(1) : 'Nuevo';
     document.getElementById('modalLinkDetalle').href = '/arquero/' + id;
+    
+    var modalImg = document.getElementById('modalImagen');
+    if (foto && foto !== '') {
+        modalImg.src = '/static/uploads/' + foto;
+        modalImg.style.display = 'block';
+    } else {
+        modalImg.style.display = 'none';
+    }
+    
     document.getElementById('arqueroModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }

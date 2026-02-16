@@ -19,6 +19,12 @@
     justify-content: center;
     margin: 0 auto 24px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .profile-avatar svg {
     width: 60px;
@@ -29,58 +35,78 @@
     font-size: 2rem;
     font-weight: 700;
     margin: 0 0 8px;
+    word-wrap: break-word;
 }
 .profile-location {
     font-size: 1rem;
     opacity: 0.9;
     margin: 0;
+    word-wrap: break-word;
 }
 .profile-section {
     padding: 40px 0;
 }
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
     margin-bottom: 40px;
+}
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 500px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
 .stat-card {
     background: white;
     border-radius: 16px;
-    padding: 24px;
+    padding: 20px 16px;
     text-align: center;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
 }
 .stat-card-icon {
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     background: #f0fdfa;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 16px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 .stat-card-icon svg {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     color: #0f756e;
 }
 .stat-card-value {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #1a1a2e;
     margin: 0 0 4px;
+    word-wrap: break-word;
+    line-height: 1.2;
 }
 .stat-card-label {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: #666;
     margin: 0;
+    white-space: nowrap;
 }
 .detail-card {
     background: white;
     border-radius: 16px;
-    padding: 32px;
+    padding: 28px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     margin-bottom: 24px;
 }
@@ -97,6 +123,8 @@
     justify-content: space-between;
     padding: 12px 0;
     border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 .detail-row:last-child {
     border-bottom: none;
@@ -104,10 +132,14 @@
 .detail-label {
     color: #666;
     font-weight: 500;
+    flex-shrink: 0;
 }
 .detail-value {
     color: #1a1a2e;
     font-weight: 600;
+    text-align: right;
+    word-wrap: break-word;
+    max-width: 60%;
 }
 .profile-actions {
     display: flex;
@@ -122,9 +154,13 @@
 <div class="profile-header">
     <div class="container">
         <div class="profile-avatar">
+            {% if arquero.usuario.foto %}
+            <img src="{{ url_for('static', filename='uploads/' + arquero.usuario.foto) }}" alt="{{ arquero.usuario.nombre }}">
+            {% else %}
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
+            {% endif %}
         </div>
         <h1 class="profile-name">{{ arquero.usuario.nombre }} {{ arquero.usuario.apellido }}</h1>
         {% if arquero.usuario.direccion %}

@@ -2,11 +2,19 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from app import db, login_manager
 from app.models import Usuario, Arquero
 from app.forms import LoginForm, RegisterForm
+import os
 
 auth = Blueprint("auth", __name__)
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads")
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Cargar usuario para Flask-Login
 @login_manager.user_loader
@@ -40,6 +48,22 @@ def register():
             flash("El correo ya está registrado", "warning")
             return redirect(url_for("auth.register"))
 
+        # Manejar la foto de perfil
+        foto_filename = None
+        if form.foto.data:
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            
+            file = form.foto.data
+            if allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Generar nombre único con timestamp
+                from datetime import datetime
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = f"{timestamp}_{filename}"
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                foto_filename = filename
+
         # Crear usuario
         nuevo_usuario = Usuario(
             nombre=form.nombre.data,
@@ -49,7 +73,8 @@ def register():
             contraseña=generate_password_hash(form.contraseña.data),
             fecha_nacimiento=form.fecha_nacimiento.data,
             direccion=form.direccion.data,
-            rol=form.rol.data
+            rol=form.rol.data,
+            foto=foto_filename
         )
         db.session.add(nuevo_usuario)
         db.session.commit()

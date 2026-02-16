@@ -1,5 +1,6 @@
 # app/forms.py
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, FloatField, DateField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length
 from app.models import Usuario
@@ -24,6 +25,7 @@ class RegisterForm(FlaskForm):
     fecha_nacimiento = DateField("Fecha de Nacimiento")
     direccion = StringField("Dirección", validators=[Length(max=200)])
     rol = SelectField("Rol", choices=[("normal", "Usuario Normal"), ("arquero", "Arquero")], default="normal")
+    foto = FileField("Foto de perfil", validators=[FileAllowed(["jpg", "jpeg", "png", "webp"], "Solo imagenes")])
     
     # Campos adicionales para arqueros
     años_tapando = IntegerField("Años de Experiencia", default=0)

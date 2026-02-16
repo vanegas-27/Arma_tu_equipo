@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+{% block title %}Arqueros - Arma tu equipo{% endblock %}
+
+{% block head %}
+<style>
+.page-header {
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.page-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.page-header-content {
+    position: relative;
+    z-index: 1; 
+    text-align: center;
+    color: white;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header h1 {
+    color: #0d9488;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0 0 20px;
+    line-height: 1.1;
+}
+.page-header h1 span {
+    display: block;
+    font-size: 2rem;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 8px;
+}
+.page-header p {
+    color: black;
+    font-size: 1.25rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+}
+.page-header-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    color: black;
+}
+.page-header-stat {
+    text-align: center;
+}
+.page-header-stat-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    display: block;
+}
+.page-header-stat-label {
+    font-size: 0.875rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.arqueros-container {
+    max-width: 1400px;
+    margin: -60px auto 60px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+}
+.section-title {
+    text-align: center;
+    margin-bottom: 48px;
+}
+.section-title h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 12px;
+}
+.section-title p {
+    color: #666;
+    font-size: 1.1rem;
+    color: #0d9488;
+}
+
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+.bento-card {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.04);
+}
+.bento-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0f756e, #14a085);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.bento-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
+}
+.bento-card:hover::before {
+    opacity: 1;
+}
+.bento-card.featured {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+@media (max-width: 900px) {
+    .bento-card.featured {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+    .page-header h1 {
+        font-size: 2.5rem;
+    }
+    .page-header h1 span {
+        font-size: 1.5rem;
+    }
+    .page-header-stats {
+        gap: 24px;
+    }
+}
+.bento-image-wrapper {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+}
+
+.bento-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+.bento-card:hover .bento-image {
+    transform: scale(1.05);
+}
+.bento-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+}
+.bento-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.95);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0f756e;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.bento-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0f756e 0%, #14a085 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bento-placeholder svg {
+    width: 80px;
+    height: 80px;
+    color: white;
+    opacity: 0.6;
+}
+.bento-content {
+    padding: 24px;
+}
+.bento-card.featured .bento-content {
+    padding: 32px;
+}
+.bento-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 12px;
+}
+.bento-card.featured .bento-name {
+    font-size: 1.75rem;
+}
+.bento-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.bento-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    color: #666;
+}
+.bento-meta-item svg {
+    width: 16px;
+    height: 16px;
+    color: #0f756e;
+}
+.bento-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f756e;
+    margin-bottom: 16px;
+}
+.bento-price span {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #999;
+}
+.bento-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+.bento-rating svg {
+    width: 18px;
+    height: 18px;
+    color: #f59e0b;
+}
+.bento-rating-value {
+    font-weight: 700;
+    color: #92400e;
+}
+.bento-rating-count {
+    color: #a16207;
+    font-size: 0.85rem;
+}
+.bento-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+.bento-link {
+    color: #0f756e;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+.bento-link svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s;
+}
+.bento-card:hover .bento-link svg {
+    transform: translateX(6px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 100px 20px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    color: #e5e5e5;
+    margin-bottom: 24px;
+}
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: #1a1a2e;
+    margin: 0 0 8px;
+}
+.empty-state p {
+    color: #999;
+    font-size: 1.1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="page-header-content animate-fade-in-up">
+            <h1>Descubre a los mejores<span>Arqueros de Colombia</span></h1>
+            <p>Jugadores profesionales verificados, con experiencia comprobada y dispuestos a hacer de cada partido una experiencia inolvidable.</p>
+            <div class="page-header-stats">
+                <div class="page-header-stat">
+                    <span class="page-header-stat-value">{{ arqueros|length }}+</span>
+                    <span class="page-header-stat-label">Arqueros</span>
+                </div>
+                <div class="page-header-stat">
+                    <span class="page-header-stat-value">4.9</span>
+                    <span class="page-header-stat-label">Calificacion</span>
+                </div>
+                <div class="page-header-stat">
+                    <span class="page-header-stat-value">100%</span>
+                    <span class="page-header-stat-label">Verificados</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="arqueros-container">
+    <div class="section-title animate-fade-in-up">
+        <h2>Nuestros Profesionales</h2>
+        <p>Selecciona un arquero para ver todos sus detalles y disponibilidad</p>
+    </div>
+
+    {% if arqueros %}
+    <div class="bento-grid">
+        {% for a in arqueros %}
+        <a href="{{ url_for('routes.arquero_detail', arquero_id=a.id) }}" class="bento-card {% if loop.first %}featured{% endif %}">
+            <div class="bento-image-wrapper">
+                {% if a.usuario.foto %}
+                <img src="{{ url_for('static', filename='uploads/' + a.usuario.foto) }}" alt="{{ a.usuario.nombre }}" class="bento-image">
+                {% else %}
+                <div class="bento-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                </div>
+                {% endif %}
+                <div class="bento-gradient"></div>
+                <span class="bento-badge">{{ a.años_tapando }} años exp.</span>
+            </div>
+            <div class="bento-content">
+                <h3 class="bento-name">{{ a.usuario.nombre }} {{ a.usuario.apellido }}</h3>
+                <div class="bento-meta">
+                    <div class="bento-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        {% if a.usuario.direccion %}{{ a.usuario.direccion[:20] }}{% else %}Colombia{% endif %}
+                    </div>
+                </div>
+                <div class="bento-price">${{ "{:,.0f}".format(a.precio_por_hora) }} <span>/hora</span></div>
+                {% if a.calificacion > 0 %}
+                <div class="bento-rating">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span class="bento-rating-value">{{ "%.1f"|format(a.calificacion) }}</span>
+                    <span class="bento-rating-count">({{ a.partidos|length }} partidos)</span>
+                </div>
+                {% endif %}
+                <div class="bento-footer">
+                    <span class="bento-link">
+                        Ver perfil completo
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state animate-fade-in-up">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <h3>No hay arqueros disponibles</h3>
+        <p>Aun no hay arqueros registrados en la plataforma.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
