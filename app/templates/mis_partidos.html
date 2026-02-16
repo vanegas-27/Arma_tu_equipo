@@ -1,38 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Mis Partidos - Arma tu equipo{% endblock %}
 
-{% block head %}
-<style>
-.rating-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.rating-form select {
-    padding: 6px 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-}
-.rating-form button {
-    padding: 6px 12px;
-    font-size: 13px;
-}
-.rated-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: #0f756e;
-    font-weight: 600;
-    font-size: 13px;
-}
-.rated-badge svg {
-    width: 14px;
-    height: 14px;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="panel-page">
     <div class="container">
@@ -90,7 +58,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if partido.estado == "confirmado" and not partido.calificado %}
+                                {% if (partido.estado == 'confirmado' or partido.estado == 'cancelado') and not partido.calificado %}
                                     <form method="POST" action="{{ url_for('routes.calificar_arquero', partido_id=partido.id) }}" class="rating-form">
                                         <select name="calificacion" required>
                                             <option value="" selected disabled>Seleccionar</option>

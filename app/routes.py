@@ -218,10 +218,6 @@ def calificar_arquero(partido_id):
         flash("No tienes permiso para calificar este partido.", "danger")
         return redirect(url_for("routes.mis_partidos"))
 
-    if partido.estado != "confirmado":
-        flash("Solo puedes calificar partidos confirmados.", "danger")
-        return redirect(url_for("routes.mis_partidos"))
-
     if partido.calificado:
         flash("Ya has calificado este partido.", "warning")
         return redirect(url_for("routes.mis_partidos"))
