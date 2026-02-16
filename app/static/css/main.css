@@ -1519,3 +1519,35 @@ h1, h2, h3, h4, h5, h6 {
 .action-buttons .btn-sm svg {
   flex-shrink: 0;
 }
+
+
+/* ============================================
+   STYLE CALIFICATION (table inline)
+   ============================================ */
+.rating-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.rating-form select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+.rating-form button {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+.rated-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #0f756e;
+    font-weight: 600;
+    font-size: 13px;
+}
+.rated-badge svg {
+    width: 14px;
+    height: 14px;
+}
