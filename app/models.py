@@ -14,6 +14,7 @@ class Usuario(UserMixin, db.Model):
     fecha_nacimiento = db.Column(db.Date)
     direccion = db.Column(db.String(200))
     rol = db.Column(db.String(20), nullable=False)  # "normal" o "arquero"
+    foto = db.Column(db.String(200))  # ruta de la foto de perfil
 
     # Relación con arquero (uno a uno)
     arquero = db.relationship("Arquero", back_populates="usuario", uselist=False)
