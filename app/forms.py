@@ -51,6 +51,7 @@ class EditProfileForm(FlaskForm):
     apellido = StringField("Apellido", validators=[DataRequired(), Length(min=2, max=50)])
     telefono = StringField("Teléfono")
     direccion = StringField("Dirección")
+    foto = FileField("Foto de perfil", validators=[FileAllowed(["jpg", "jpeg", "png", "webp"], "Solo imagenes")])
     # Campos específicos para arquero
     años_tapando = IntegerField("Años tapando")
     precio_por_hora = FloatField("Precio por hora")

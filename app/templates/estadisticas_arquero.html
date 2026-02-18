@@ -6,7 +6,7 @@
     <div class="container">
         <div class="panel-header animate-fade-in-up">
             <h2>Estadisticas de arquero</h2>
-            <p>Resumen de tus partidos asignados y ganancias</p>
+            <p>Resumen de tus partidos, assistencias y ganancias</p>
         </div>
 
         <!-- Stats row -->
@@ -14,21 +14,76 @@
             <div class="stat-card">
                 <div class="stat-icon green">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <h4>Total ganado</h4>
-                    <div class="stat-value">${{ total }}</div>
+                    <h4>Partidos jugados</h4>
+                    <div class="stat-value">{{ total_jugados }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Partidos confirmados</h4>
+                    <div class="stat-value">{{ total_jugados }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Partidos pendientes</h4>
+                    <div class="stat-value">{{ total_pendientes }}</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Total ingresos</h4>
+                    <div class="stat-value">${{ "{:,.0f}".format(total_ingresos) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats row 2 -->
+        <div class="stats-row animate-fade-in-up delay-2">
+            <div class="stat-card" style="flex: 1;">
+                <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <h4>Partidos cancelados</h4>
+                    <div class="stat-value">{{ total_cancelados }}</div>
                 </div>
             </div>
         </div>
 
         <!-- Chart -->
-        <div class="chart-card animate-fade-in-up delay-2">
-            <h3>Partidos confirmados por mes</h3>
-            <canvas id="graficoPartidos"></canvas>
+        <div class="chart-card animate-fade-in-up delay-3">
+            <h3>Ingresos por mes</h3>
+            <canvas id="graficoIngresos"></canvas>
         </div>
     </div>
 </div>
@@ -40,16 +95,16 @@
     Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
     Chart.defaults.color = '#64748b';
 
-    const ctx = document.getElementById('graficoPartidos').getContext('2d');
-    const graficoPartidos = new Chart(ctx, {
+    const ctx = document.getElementById('graficoIngresos').getContext('2d');
+    const graficoIngresos = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: {{ labels|tojson }},
             datasets: [{
-                label: 'Partidos confirmados',
+                label: 'Ingresos ($)',
                 data: {{ data|tojson }},
-                backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                borderColor: 'rgba(34, 197, 94, 1)',
+                backgroundColor: 'rgba(15, 118, 110, 0.7)',
+                borderColor: 'rgba(15, 118, 110, 1)',
                 borderWidth: 1,
                 borderRadius: 6,
                 borderSkipped: false
@@ -61,13 +116,22 @@
             plugins: {
                 legend: {
                     display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.raw.toLocaleString('es-CO');
+                        }
+                    }
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1
+                        callback: function(value) {
+                            return '$' + value.toLocaleString('es-CO');
+                        }
                     },
                     grid: {
                         color: 'rgba(0,0,0,0.05)'
