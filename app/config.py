@@ -2,6 +2,8 @@ import os
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
-    # PostgreSQL: postgresql://user:password@host/dbname
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    # mysql+mysqlconnector://DB_user:BD_pass@BD_host/BD_name
+    SQLALCHEMY_DATABASE_URI = (
+        f"mysql+mysqlconnector://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
