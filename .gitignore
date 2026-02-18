@@ -37,6 +37,9 @@ $RECYCLE.BIN/
 .env
 /venv
 
+# Archivos subidos
+app/static/uploads/
+
 # Python
 __pycache__/
 *.py[cod]
