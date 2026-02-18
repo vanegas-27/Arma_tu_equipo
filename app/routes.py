@@ -1,13 +1,21 @@
 # app/routes.py
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 from app.forms import PartidoForm, EditProfileForm
 from app.models import Arquero, Partido
 from app import db
 from collections import Counter
 import calendar
+import os
 
 routes = Blueprint("routes", __name__)
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "uploads")
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @routes.route("/")
 def home():
@@ -95,12 +103,13 @@ def partidos_asignados():
 @routes.route("/editar_perfil", methods=["GET", "POST"])
 @login_required
 def editar_perfil():
-    form = EditProfileForm(obj=current_user)  # precargar datos del usuario
+    form = EditProfileForm()
 
     # Si es arquero, precargar también sus datos
     if current_user.rol == "arquero" and current_user.arquero:
-        form.años_tapando.data = current_user.arquero.años_tapando
-        form.precio_por_hora.data = current_user.arquero.precio_por_hora
+        if request.method == "GET":
+            form.años_tapando.data = current_user.arquero.años_tapando
+            form.precio_por_hora.data = current_user.arquero.precio_por_hora
 
     if form.validate_on_submit():
         # Actualizar datos básicos
@@ -109,14 +118,37 @@ def editar_perfil():
         current_user.telefono = form.telefono.data
         current_user.direccion = form.direccion.data
 
+        # Manejar la foto de perfil
+        if form.foto.data:
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            
+            file = form.foto.data
+            if allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                from datetime import datetime
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = f"{timestamp}_{filename}"
+                file.save(os.path.join(UPLOAD_FOLDER, filename))
+                current_user.foto = filename
+
         # Si es arquero, actualizar datos específicos
         if current_user.rol == "arquero" and current_user.arquero:
-            current_user.arquero.años_tapando = form.años_tapando.data
-            current_user.arquero.precio_por_hora = form.precio_por_hora.data
+            if form.años_tapando.data is not None:
+                current_user.arquero.años_tapando = form.años_tapando.data
+            if form.precio_por_hora.data is not None:
+                current_user.arquero.precio_por_hora = form.precio_por_hora.data
 
         db.session.commit()
         flash("Perfil actualizado correctamente.", "success")
         return redirect(url_for("routes.panel"))
+
+    # Precargar datos para GET
+    if request.method == "GET":
+        form.nombre.data = current_user.nombre
+        form.apellido.data = current_user.apellido
+        form.telefono.data = current_user.telefono
+        form.direccion.data = current_user.direccion
 
     return render_template("editar_perfil.html", form=form)
 
@@ -170,26 +202,6 @@ def historial_arquero():
     return render_template("historial_arquero.html", partidos=partidos, total=total_ganado)
 
 
-@routes.route("/estadisticas_usuario")
-@login_required
-def estadisticas_usuario():
-    if current_user.rol != "normal":
-        flash("Solo los usuarios normales pueden ver estadísticas.", "danger")
-        return redirect(url_for("routes.panel"))
-
-    partidos = [p for p in current_user.partidos if p.estado == "confirmado"]
-
-    # Contar partidos por mes
-    meses = [p.fecha.month for p in partidos]
-    conteo = Counter(meses)
-
-    labels = [calendar.month_name[m] for m in sorted(conteo.keys())]
-    data = [conteo[m] for m in sorted(conteo.keys())]
-
-    total_gastado = sum(p.pago for p in partidos)
-
-    return render_template("estadisticas_usuario.html", labels=labels, data=data, total=total_gastado)
-
 @routes.route("/estadisticas_arquero")
 @login_required
 def estadisticas_arquero():
@@ -197,18 +209,41 @@ def estadisticas_arquero():
         flash("Solo los arqueros pueden ver estadísticas.", "danger")
         return redirect(url_for("routes.panel"))
 
-    partidos = [p for p in current_user.arquero.partidos if p.estado == "confirmado"]
+    arquero = current_user.arquero
+    partidos = arquero.partidos
 
-    # Contar partidos por mes
-    meses = [p.fecha.month for p in partidos]
-    conteo = Counter(meses)
+    # Total partidos jugados (confirmados)
+    partidos_jugados = [p for p in partidos if p.estado == "confirmado"]
+    total_jugados = len(partidos_jugados)
+    
+    # Total partidos cancelados
+    total_cancelados = len([p for p in partidos if p.estado == "cancelado"])
+    
+    # Total partidos pendientes
+    total_pendientes = len([p for p in partidos if p.estado == "pendiente"])
+    
+    # Ingresos por mes (solo confirmados)
+    ingresos_por_mes = {}
+    for p in partidos_jugados:
+        mes = f"{p.fecha.year}-{p.fecha.month:02d}"
+        ingresos_por_mes[mes] = ingresos_por_mes.get(mes, 0) + p.pago
 
-    labels = [calendar.month_name[m] for m in sorted(conteo.keys())]
-    data = [conteo[m] for m in sorted(conteo.keys())]
+    # Ordenar por mes
+    meses_ordenados = sorted(ingresos_por_mes.keys())
+    labels = [m.split('-')[1] + '/' + m.split('-')[0][2:] for m in meses_ordenados]
+    data = [ingresos_por_mes[m] for m in meses_ordenados]
 
-    total_ganado = sum(p.pago for p in partidos)
+    total_ingresos = sum(p.pago for p in partidos_jugados)
 
-    return render_template("estadisticas_arquero.html", labels=labels, data=data, total=total_ganado)
+    return render_template(
+        "estadisticas_arquero.html", 
+        labels=labels, 
+        data=data, 
+        total_jugados=total_jugados,
+        total_cancelados=total_cancelados,
+        total_pendientes=total_pendientes,
+        total_ingresos=total_ingresos
+    )
 
 @routes.route("/calificar/<int:partido_id>", methods=["POST"])
 @login_required
